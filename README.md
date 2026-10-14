@@ -1,4 +1,4 @@
-# model_eval
+# free-model-bench
 
 Overnight benchmark for the free `opencode/*` models.
 

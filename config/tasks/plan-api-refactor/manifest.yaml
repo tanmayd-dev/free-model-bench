@@ -1,0 +1,45 @@
+id: plan-api-refactor
+name: "Legacy API — layered migration plan"
+description: >
+  Plan-only. Read a monolithic stdlib HTTP API and write a phased,
+  behaviour-preserving migration plan to a layered architecture. No code is
+  produced: the deliverable is the plan, graded by the plan rubric plus
+  deterministic grounding/ordering/read-only checks.
+enabled: true
+profiles: [minimal, full]
+weight: 0.6
+
+# No implement/verify stage: the plan IS the artifact under test. This task
+# exists partly to prove the harness copes with a stage subset.
+stages: [plan, judge]
+
+# Never used (no implement stage), kept so `--source` has something valid.
+implement_from: [own]
+
+hidden_tests: auto            # no hidden/ dir; nothing to run
+exclude_tests: []
+exclude_checks: []
+
+timeouts:
+  plan: 900
+  judge: 300
+
+judge_models:
+  - claude-opus-4-6-thinking
+  - claude-sonnet-4-6
+  - gemini-3.8-flash-high
+
+rubrics:
+  plan: rubric-plan.txt
+
+# The shared config/schemas/plan.schema.json scores specificity/correctness/
+# risk_awareness/feasibility/structure -- none of which appear in this task's
+# rubric. agy enforces --json-schema, so judges would have been forced to
+# answer with the generic dimension set and the rubric would have been
+# decorative. Scope the schema to the rubric's own five dimensions.
+judge_schema:
+  plan: plan.schema.json
+
+# scoring omitted on purpose: DEFAULT_SCORING is judge_plan = 1.0. The
+# deterministic checks in checks.py are not a separate scored component --
+# they are handed to the judge as harness-generated evidence.

@@ -1,0 +1,38 @@
+You are planning work on an existing project. You are in READ-ONLY planning
+mode: explore the repository, then produce a plan. Do not modify any files.
+
+------------------------------------------------------------------
+OUR PROJECT
+------------------------------------------------------------------
+{{SPEC}}
+
+------------------------------------------------------------------
+YOUR TASK
+------------------------------------------------------------------
+Read the code in this repository first -- README, then shopfront/ -- before
+you write anything. The plan has to be grounded in what is actually there,
+not in what a codebase like this usually looks like.
+
+Then produce a single self-contained migration plan for the layered
+architecture described above.
+
+A separate execution step that has never seen this conversation will follow
+your plan, so it must stand alone. It should contain:
+
+1. **Target layout** — every module in the target architecture, and which
+   existing function from `api.py`, `db.py` or `auth.py` lands in it (by
+   function name), including which current functions must be split.
+2. **Ordered migration steps** — numbered, each one small enough to land in
+   a single review, each leaving the visible `tests/` suite green. Name the
+   verification you run at the end of every step.
+3. **Seams and state** — the specific obstacles in *this* code (the
+   connection-per-query helper, `auth.SESSIONS`, the `handle` entry point,
+   the route chain) and exactly how each is unwound.
+4. **Risks** — what breaks, how you would notice, what the rollback is.
+5. **Behaviour preservation** — how you prove nothing observable changed,
+   beyond the existing tests.
+6. **Non-goals** — what you will not touch, and why.
+7. **Flagged follow-ups** — the behaviour changes that must not be mixed in.
+
+Do not write the refactored code. Do not propose new dependencies. Output
+ONLY the plan, as Markdown. Do not write, edit, or create any file.

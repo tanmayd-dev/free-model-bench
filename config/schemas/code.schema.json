@@ -1,0 +1,31 @@
+{
+  "type": "object",
+  "properties": {
+    "dimensions": {
+      "type": "object",
+      "properties": {
+        "correctness": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "edge_case_handling": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "test_adherence": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "readability": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "scope_discipline": { "type": "integer", "minimum": 1, "maximum": 10 }
+      },
+      "required": [
+        "correctness",
+        "edge_case_handling",
+        "test_adherence",
+        "readability",
+        "scope_discipline"
+      ],
+      "additionalProperties": false
+    },
+    "violations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Concrete problems: modified files under tests/, forbidden dependencies, wrong exit codes, missing atomic writes. Empty if none."
+    },
+    "notes": { "type": "string", "description": "<= 400 words. Specific, evidence-based." }
+  },
+  "required": ["dimensions", "violations", "notes"],
+  "additionalProperties": false
+}

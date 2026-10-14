@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "properties": {
+    "dimensions": {
+      "type": "object",
+      "properties": {
+        "codebase_reading": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "migration_soundness": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "seam_coverage": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "risk_and_verification": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "structure": { "type": "integer", "minimum": 1, "maximum": 10 }
+      },
+      "required": [
+        "codebase_reading",
+        "migration_soundness",
+        "seam_coverage",
+        "risk_and_verification",
+        "structure"
+      ],
+      "additionalProperties": false
+    },
+    "fabrication": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Concrete claims that reference something that does not exist in the provided file listing -- functions, modules or behaviours the plan invents. Empty if none."
+    },
+    "missed_requirements": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Of the seven sections the brief demands, plus the six hard constraints, which are absent or unaddressed. Empty if none."
+    },
+    "notes": { "type": "string", "description": "<= 400 words. Specific, evidence-based." }
+  },
+  "required": ["dimensions", "fabrication", "missed_requirements", "notes"],
+  "additionalProperties": false
+}

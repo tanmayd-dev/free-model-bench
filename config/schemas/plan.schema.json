@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "properties": {
+    "dimensions": {
+      "type": "object",
+      "properties": {
+        "specificity": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "correctness": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "risk_awareness": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "feasibility": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "structure": { "type": "integer", "minimum": 1, "maximum": 10 }
+      },
+      "required": [
+        "specificity",
+        "correctness",
+        "risk_awareness",
+        "feasibility",
+        "structure"
+      ],
+      "additionalProperties": false
+    },
+    "fabrication": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Concrete claims that reference something that does not exist in the provided file listing, or requirements invented beyond the brief. Empty if none."
+    },
+    "missed_requirements": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "notes": { "type": "string", "description": "<= 400 words. Specific, evidence-based." }
+  },
+  "required": ["dimensions", "fabrication", "missed_requirements", "notes"],
+  "additionalProperties": false
+}

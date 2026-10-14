@@ -1,0 +1,10 @@
+# Generated at runtime. Delete this whole tree and the harness rebuilds its
+# registries -- you only lose scored results.
+state/
+
+# Leaderboard + monthly history snapshots.
+results/
+
+__pycache__/
+*.pyc
+.pytest_cache/

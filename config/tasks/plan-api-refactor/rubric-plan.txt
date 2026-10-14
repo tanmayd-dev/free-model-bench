@@ -1,0 +1,67 @@
+Score each dimension from 1 (unusable) to 10 (exceptional). Be exacting: a
+plan that sounds architectural but does not engage with the code actually in
+the repository should not score above 5 on any dimension.
+
+DIMENSIONS
+
+codebase_reading
+  1-3  Describes a generic layered rewrite. Does not name the files or
+       functions that exist, or names ones that do not.
+  4-6  Names `api.py`, `db.py` and `auth.py` and gestures at their contents,
+       but the mapping to specific functions is missing.
+  7-8  Every function that moves is named, and the plan correctly identifies
+       what `handle`, `_route`, `db.query`, `auth.SESSIONS` and
+       `_list_products` actually do today.
+  9-10 All of the above, plus the plan catches details that only reading the
+       code reveals -- e.g. that `_split` strips trailing slashes, that the
+       `q` parameter is interpolated into SQL while other parameters are
+       bound, that `sku` matching is case-normalised in `_create_product`
+       but not in `_get_product`, or that `_parse_body` maps malformed JSON
+       to 400 via a bare `except (ValueError, ...)`.
+
+migration_soundness
+  1-3  Big-bang move, or a sequence where intermediate states do not run.
+  4-6  Incremental in outline, but the steps are not independently
+       verifiable or the tree is broken between them.
+  7-8  Ordered steps that each leave `tests/` green, with the verification
+       for each step named and the target layout reached.
+  9-10 Steps are small enough to land individually, dependencies between
+       them are explicit, the `handle` shim is carried across rather than
+       cut over, and the plan says what to do when a step turns out to be
+       bigger than expected.
+
+seam_coverage
+  1-3  Ignores the obstacles the brief calls out.
+  4-6  Mentions connection-per-query and sessions but offers no mechanism
+       for unwinding them without changing behaviour.
+  7-8  Addresses the connection churn, the process-local `SESSIONS`, the
+       order-sensitive route chain and the `handle` entry point, each with a
+       concrete technique.
+  9-10 Above plus the harder seams: `db.execute` returning
+       `last_insert_rowid()` immediately (so it cannot become a transaction
+       boundary without changing what callers see), `connect()` re-running
+       `executescript` on every call, and `sqlite3.Row` leaking into
+       service-layer return types.
+
+risk_and_verification
+  1-3  "Run the tests" is the whole verification story.
+  4-6  Names the test suite and one or two risks, with no detection method.
+  7-8  A concrete behaviour-preservation strategy (characterisation tests,
+       response-body snapshots, error-string assertions) plus a risk
+       register with blast radius and detection.
+  9-10 Above, and the plan explicitly covers the behaviours the visible
+       suite does NOT pin down -- the exact JSON key order, the `LIMIT`
+       interpolation, 409 vs 400 on duplicate SKUs, and the stock-deduction
+       race -- while still refusing to change any of them in this pass.
+
+structure
+  1-3  Wall of prose, or missing whole sections the brief demands.
+  4-6  Organised loosely; sections present but thin or duplicated.
+  7-8  All seven required sections, internally consistent, scannable.
+  9-10 Complete and self-contained: an engineer who has never seen the repo
+       could execute it, and any one answer can be found in seconds.
+
+LENGTH IS NOT SCORED. A shorter plan that engages with the real code beats a
+long one that does not. Do not reward verbosity, formatting flourish, or
+hedging. Do not reward a plan for proposing behaviour changes -- those are
+explicitly out of scope and must be flagged, not smuggled in.

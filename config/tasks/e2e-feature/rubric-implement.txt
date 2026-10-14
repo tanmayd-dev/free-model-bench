@@ -1,0 +1,51 @@
+Score each dimension from 1 (unusable) to 10 (exceptional). You are reviewing
+a diff plus the results of a hidden test suite. Be exacting.
+
+EVIDENCE HIERARCHY — use it in this order:
+1. The hidden test results (hard evidence; do not override them with vibes).
+2. The visible suite results (did it break what already worked?).
+3. The diff itself.
+
+DIMENSIONS
+
+correctness
+  1-3  Hidden tests mostly fail, or the feature does not work at all.
+  4-6  Core paths work; a meaningful cluster of edge cases fails.
+  7-8  Nearly all hidden tests pass; the remainder are isolated and minor.
+  9-10 All hidden tests pass and the implementation matches the brief
+       literally (format strings, exit codes, atomic writes).
+
+edge_case_handling
+  1-3  No thought given to month-end, leap years, empty windows, empty or
+       missing files, or absent budgets.
+  4-6  Some edge cases handled, at least one specified case is wrong.
+  7-8  The specified edge cases are handled; nothing surprising.
+  9-10 Specified edge cases plus defensible handling of unspecified ones
+       (malformed rows, unknown frequency, duplicate ids) without over-
+       engineering.
+
+test_adherence
+  1-3  Tests under tests/ were modified or deleted, or the visible suite was
+       left red.
+  4-6  Visible suite green but tests were touched in ways the brief forbids.
+  7-8  tests/ untouched, visible suite green.
+  9-10 tests/ untouched, visible suite green, and the change is clearly
+       designed to be testable (small focused functions, no hidden globals).
+
+readability
+  1-3  Unreadable or copy-pasted soup.
+  4-6  Works but naming, duplication or structure would slow a maintainer.
+  7-8  Consistent with the existing codebase's style; clear names; docstrings
+       where the behaviour is not obvious.
+  9-10 Above, plus genuinely good decomposition; the awkward parts (date
+       arithmetic, format strings) are isolated and easy to verify.
+
+scope_discipline
+  1-3  Rewrites unrelated code, adds dependencies, adds features nobody asked
+       for, or changes docs/format.md's existing sections.
+  4-6  Some gratuitous churn outside the feature.
+  7-8  Changes are confined to what the brief required.
+  9-10 Exactly the necessary surface, reusing LedgerStore / format_money /
+       ValidationError as instructed, with nothing speculative.
+
+LENGTH IS NOT SCORED. Do not reward verbosity or formatting flourish.

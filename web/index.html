@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>model_eval · control panel</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13'>⚖️</text></svg>">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="logo">⚖️</span>
+    <h1>model_eval</h1>
+    <span class="sub" id="hdr-status">connecting…</span>
+  </div>
+  <nav id="tabs">
+    <button data-view="leaderboard" class="active">Leaderboard</button>
+    <button data-view="runs">Runs</button>
+    <button data-view="tasks">Tasks</button>
+    <button data-view="models">Models</button>
+    <button data-view="jobs">Jobs</button>
+    <button data-view="settings">Settings</button>
+  </nav>
+  <div class="spacer"></div>
+  <div class="hdr-right">
+    <span id="hdr-pending" class="pill">…</span>
+    <span id="hdr-clock" class="pill ghost">—</span>
+  </div>
+</header>
+
+<main>
+  <!-- ============================ LEADERBOARD ======================= -->
+  <section id="view-leaderboard" class="view">
+    <div class="toolbar">
+      <div class="left">
+        <label>Profile
+          <select id="lb-profile">
+            <option value="">all tasks</option>
+            <option value="minimal">minimal (daily)</option>
+            <option value="full">full (monthly)</option>
+          </select>
+        </label>
+        <span class="hint" id="lb-generated">no results yet</span>
+      </div>
+      <div class="right">
+        <button id="lb-rescore" class="ghost">Re-score now</button>
+      </div>
+    </div>
+    <div id="lb-empty" class="empty hidden">
+      <p>No leaderboard yet.</p>
+      <p class="hint">Start a run below, or run <code>./scripts/run-eval.sh --mode smoke</code>.</p>
+    </div>
+    <div class="table-wrap">
+      <table id="lb-table">
+        <thead>
+          <tr>
+            <th data-sort="rank" class="num">#</th>
+            <th data-sort="model">Model</th>
+            <th data-sort="composite" class="num">Composite</th>
+            <th data-sort="plan_rubric" class="num">Plan rubric</th>
+            <th data-sort="code_rubric" class="num">Code rubric</th>
+            <th data-sort="tests" class="num">Hidden tests</th>
+            <th data-sort="tasks_scored" class="num">Tasks</th>
+            <th data-sort="wall_clock_s" class="num">Wall</th>
+            <th data-sort="tokens_out" class="num">Tokens out</th>
+            <th data-sort="tool_calls" class="num">Tools</th>
+            <th data-sort="failures" class="num">Fails</th>
+            <th data-sort="judge_n" class="num">Judges</th>
+            <th data-sort="judge_spread" class="num">Judge Δ</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="lb-detail"></div>
+  </section>
+
+  <!-- ============================== RUNS ============================ -->
+  <section id="view-runs" class="view hidden">
+    <div class="toolbar">
+      <div class="left">
+        <input id="runs-filter" type="search" placeholder="filter by model or task…">
+        <select id="runs-stage">
+          <option value="">all stages</option>
+          <option>plan</option>
+          <option>implement</option>
+          <option>verify</option>
+        </select>
+        <select id="runs-status">
+          <option value="">all statuses</option>
+          <option>ok</option>
+          <option>error</option>
+          <option>timeout</option>
+          <option>cancelled</option>
+          <option>running</option>
+        </select>
+      </div>
+      <div class="right"><span class="hint" id="runs-count"></span></div>
+    </div>
+    <div class="split">
+      <div class="table-wrap">
+        <table id="runs-table">
+          <thead><tr>
+            <th>Started</th><th>Model</th><th>Task</th><th>Stage</th>
+            <th>Status</th><th class="num">Sec</th><th class="num">Tok out</th>
+            <th class="num">Tests</th><th class="num">Score</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="run-detail" class="panel"><p class="hint">Select a run.</p></div>
+    </div>
+  </section>
+
+  <!-- ============================== TASKS =========================== -->
+  <section id="view-tasks" class="view hidden">
+    <p class="hint">
+      Toggling here writes an override; the manifest on disk stays authoritative
+      for everything you do not touch.
+    </p>
+    <div id="tasks-list" class="cards"></div>
+  </section>
+
+  <!-- ============================== MODELS ========================== -->
+  <section id="view-models" class="view hidden">
+    <div class="toolbar">
+      <div class="left"><span class="hint">Free models discovered from <code>opencode models</code>.</span></div>
+      <div class="right"><button id="models-refresh" class="ghost">Refresh model list</button></div>
+    </div>
+    <div class="table-wrap">
+      <table id="models-table">
+        <thead><tr>
+          <th>Model</th><th>Status</th><th>Enabled</th><th class="num">Weight</th>
+          <th>First seen</th><th>Last run</th><th>Notes</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- =============================== JOBS =========================== -->
+  <section id="view-jobs" class="view hidden">
+    <div class="panel">
+      <h2>Run an evaluation</h2>
+      <div class="form">
+        <label>Mode
+          <select id="job-mode">
+            <option value="auto">auto — daily, minimal profile</option>
+            <option value="smoke">smoke — 1 model × 1 task</option>
+            <option value="daily">daily — minimal profile</option>
+            <option value="full">full — all tasks</option>
+            <option value="monthly">monthly — all tasks, force re-run</option>
+            <option value="all">all — every task, no profile filter</option>
+          </select>
+        </label>
+        <label>Concurrency
+          <input id="job-conc" type="number" min="1" max="16" value="3">
+        </label>
+        <label>Time budget (min)
+          <input id="job-budget" type="number" min="0" placeholder="unlimited">
+        </label>
+        <label>Models (blank = all enabled)
+          <input id="job-models" type="text" placeholder="opencode/big-pickle,opencode/exo-free">
+        </label>
+        <label>Tasks (blank = all)
+          <input id="job-tasks" type="text" placeholder="e2e-feature">
+        </label>
+        <label class="chk"><input id="job-force" type="checkbox"> ignore cache (--force)</label>
+        <label class="chk"><input id="job-nojudge" type="checkbox"> skip judging (free, tests only)</label>
+      </div>
+      <div class="actions">
+        <button id="job-start" class="primary">Start run</button>
+        <button id="job-pause" class="warn" disabled>Pause</button>
+        <button id="job-stop" class="danger" disabled>Stop</button>
+        <span id="job-msg" class="hint"></span>
+      </div>
+
+      <div id="job-progress" class="progress hidden">
+        <div class="bar"><div class="fill" id="job-fill"></div></div>
+        <div class="progress-meta">
+          <span id="job-progress-text">—</span>
+          <span id="job-current" class="hint"></span>
+        </div>
+      </div>
+
+      <details class="log">
+        <summary>Live log</summary>
+        <pre id="job-log"></pre>
+      </details>
+    </div>
+
+    <div class="panel">
+      <h2>Recent jobs</h2>
+      <div class="table-wrap">
+        <table id="jobs-table">
+          <thead><tr>
+            <th>Started</th><th>Mode</th><th>Status</th><th>Control</th>
+            <th class="num">Done</th><th>Message</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= SETTINGS ========================= -->
+  <section id="view-settings" class="view hidden">
+    <div class="panel">
+      <h2>Defaults</h2>
+      <div class="form">
+        <label>Default concurrency
+          <input id="set-conc" type="number" min="1" max="16">
+        </label>
+        <label>Default time budget (min, blank = unlimited)
+          <input id="set-budget" type="number" min="0">
+        </label>
+        <label>Judge panel (comma separated agy model ids — blank = per-task manifest)
+          <input id="set-judges" type="text"
+                 placeholder="claude-opus-4-6-thinking, claude-sonnet-4-6, gemini-3.8-flash-high">
+        </label>
+      </div>
+      <div class="actions"><button id="set-save" class="primary">Save settings</button>
+        <span id="set-msg" class="hint"></span></div>
+    </div>
+    <div class="panel">
+      <h2>Environment</h2>
+      <dl class="kv" id="set-env"></dl>
+      <p class="hint">Scheduling lives in systemd user timers — run
+        <code>./scripts/install-systemd.sh</code> to install them.</p>
+    </div>
+  </section>
+</main>
+
+<div id="toast" class="toast hidden"></div>
+<script src="/app.js"></script>
+</body>
+</html>

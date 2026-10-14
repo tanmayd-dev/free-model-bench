@@ -1,0 +1,45 @@
+id: e2e-feature
+name: "Ledger CLI — recurring transactions + budget alerts"
+description: >
+  Plan, then implement, a recurring-transaction and budget feature in an
+  existing stdlib-only Python CLI. Hidden tests cover month arithmetic
+  (including non-accumulating month-end clamping), window inclusivity,
+  persistence formats and exact CLI output.
+enabled: true
+profiles: [minimal, full]
+weight: 1.0
+
+# plan   -> plan agent, read-only, judged on the plan text
+# implement -> build agent, writes files, then
+# verify -> hidden tests + deterministic checks (no model call)
+# judge  -> agy premium judges score plan.md and the diff
+stages: [plan, implement, verify, judge]
+
+# own  = the model implements the plan IT wrote (end-to-end plan -> code)
+# gold = the model is handed a fixed reference plan (isolates coding ability)
+implement_from: [own]
+
+hidden_tests: auto            # auto | [explicit file names]
+exclude_tests: []             # disable individual hidden tests by name
+exclude_checks: []            # disable deterministic checks by name
+
+timeouts:
+  plan: 900
+  implement: 1800
+  verify: 300
+  judge: 300
+
+judge_models:
+  - claude-opus-4-6-thinking
+  - claude-sonnet-4-6
+  - gemini-3.8-flash-high
+
+rubrics:
+  plan: rubric-plan.txt
+  code: rubric-implement.txt
+
+# components: judge_plan, judge_code, tests  (normalised internally)
+scoring:
+  judge_plan: 0.30
+  tests: 0.50
+  judge_code: 0.20

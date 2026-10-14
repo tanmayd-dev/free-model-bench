@@ -1,0 +1,32 @@
+You are planning work on an existing project. You are in READ-ONLY planning
+mode: explore the repository, then produce a plan. Do not modify any files.
+
+------------------------------------------------------------------
+OUR PROJECT
+------------------------------------------------------------------
+{{SPEC}}
+
+------------------------------------------------------------------
+YOUR TASK
+------------------------------------------------------------------
+Read the code in this repository first (README, docs, then ledger/). Then
+produce a single self-contained, implementation-ready plan for the feature
+request above.
+
+A separate implementation step that has never seen this conversation will
+follow your plan, so it must stand alone. It should contain:
+
+1. **Files** — every file to create or modify, and why that file.
+2. **Public API** — exact names, signatures, parameter types and return
+   types for everything new, written as Python declarations.
+3. **Algorithms & edge cases** — walk through the tricky parts, especially
+   the month arithmetic and window/inclusivity rules, with concrete
+   worked examples (dates in, dates out).
+4. **Output formats** — the literal format strings for every new line the
+   CLI prints, and every exit code.
+5. **Implementation order** — the sequence you would build it in, and how
+   you would verify each step.
+6. **Reuse vs leave alone** — what existing code you will build on, and
+   what you deliberately will not touch (and why).
+
+Output ONLY the plan, as Markdown. Do not write, edit, or create any file.

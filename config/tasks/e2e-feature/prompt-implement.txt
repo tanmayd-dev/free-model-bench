@@ -1,0 +1,28 @@
+You are implementing a feature in an existing project. Work in the current
+directory.
+
+------------------------------------------------------------------
+OUR PROJECT
+------------------------------------------------------------------
+{{SPEC}}
+
+------------------------------------------------------------------
+PLAN TO IMPLEMENT
+------------------------------------------------------------------
+{{PLAN}}
+
+------------------------------------------------------------------
+YOUR TASK
+------------------------------------------------------------------
+Implement the feature request above, following the plan. Adapt or deviate
+from the plan only where you find a concrete reason in the code to do so.
+
+Rules:
+* Work in the current directory. You may create and modify files as needed.
+* Do NOT modify anything under tests/.
+* Keep every hard convention in the briefing (money in cents, atomic writes,
+  exit codes, no third-party dependencies, `main(argv)` never raises).
+* Before you finish, run `python3 -m pytest -q` and make sure the visible
+  suite is green. Fix anything you broke.
+* Finish by replying with a short summary of what you changed and the result
+  of the test run. Do not claim tests passed if they did not.
